@@ -1,0 +1,12 @@
+
+# Python Backend Gitignore
+
+# Environment variables
+.env
+.env.local
+.env.*
+
+# Virtual Environment
+venv/
+.venv/
+env/
