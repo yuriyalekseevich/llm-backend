@@ -1,10 +1,8 @@
 import logging
 import json
 
-
 class JSONFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
-        # Base log record
         log_record = {
             "timestamp": self.formatTime(record, self.datefmt),
             "level": record.levelname,
@@ -15,12 +13,14 @@ class JSONFormatter(logging.Formatter):
             "lineno": record.lineno,
         }
 
-        # Include extra fields passed via `extra` kwarg
+        # extra fields
         for key, value in record.__dict__.items():
-            if key in ("name", "msg", "args", "levelname", "levelno", "pathname", "filename", "module", "exc_info", "exc_text", "stack_info", "lineno", "funcName", "created", "msecs", "relativeCreated", "thread", "threadName", "processName", "process"):
+            if key in ("name","msg","args","levelname","levelno","pathname","filename",
+                       "module","exc_info","exc_text","stack_info","lineno","funcName",
+                       "created","msecs","relativeCreated","thread","threadName","processName","process"):
                 continue
             try:
-                json.dumps(value)  # ensure serializable
+                json.dumps(value)
                 log_record[key] = value
             except Exception:
                 log_record[key] = str(value)
@@ -31,12 +31,9 @@ class JSONFormatter(logging.Formatter):
         return json.dumps(log_record, ensure_ascii=False)
 
 
-def setup_logging(level: int = logging.INFO) -> None:
-    """Configure root logger to emit JSON to stdout."""
+def setup_logging(level: int = logging.INFO):
     root = logging.getLogger()
     root.setLevel(level)
-
-    # Avoid adding duplicate handlers on reload by clearing existing ones
     if root.handlers:
         root.handlers = []
 
@@ -44,6 +41,4 @@ def setup_logging(level: int = logging.INFO) -> None:
     handler.setFormatter(JSONFormatter())
     root.addHandler(handler)
 
-
-def get_logger(name: str = __name__) -> logging.Logger:
-    return logging.getLogger(name)
+logger = logging.getLogger(__name__)
