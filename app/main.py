@@ -5,12 +5,15 @@ import chromadb
 from sentence_transformers import SentenceTransformer
 import uuid
 import logging
+from app.routers import api 
 
-# Настройка логирования
+from dotenv import load_dotenv
+
+load_dotenv()
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Инициализация
 logger.info("🚀 Starting RAG Backend for Week 5: Embeddings & Vector Search")
 
 # ChromaDB
@@ -39,7 +42,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Pydantic модели
 class Document(BaseModel):
     text: str
     metadata: Optional[Dict[str, Any]] = None
@@ -144,6 +146,9 @@ def search(request: SearchRequest):
     except Exception as e:
         logger.error(f"Error searching: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+    
+# Mount routers (scalable: Add more like app.include_router(admin_router, prefix="/admin"))
+app.include_router(api.router, prefix="/api")
 
 if __name__ == "__main__":
     import uvicorn

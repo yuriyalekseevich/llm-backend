@@ -1,8 +1,8 @@
 # routers/rag.py
 from fastapi import APIRouter, Depends, HTTPException
-from models.rag import ChunkIn, QueryRag, RagResponse
-from services.rag_service import RagService
-from dependencies import get_rag_service
+from app.models.rag import ChunkIn, QueryRag, RagResponse
+from app.services.rag_service import RagService
+from app.dependencies import get_rag_service
 from typing import List
 import logging
 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from openai import OpenAI
-from dependencies import get_openai_client, get_groq_client
-from models.models import Query, Response
+from app.dependencies import get_openai_client, get_groq_client
+from app.models.models import Query, Response
 from groq import Groq
 import json
 import logging

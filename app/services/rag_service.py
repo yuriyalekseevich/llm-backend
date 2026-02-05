@@ -1,8 +1,8 @@
 # services/rag_service.py
 from sentence_transformers import SentenceTransformer
 from typing import List
-from models.rag import ChunkIn, QueryRag, RagResponse, ChunkOut
-from repositories.chroma_repo import ChromaRepository
+from app.models.rag import ChunkIn, QueryRequest, QueryResponse, ChunkOut
+from app.repositories.chroma_repo import ChromaRepository
 import logging
 
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ class RagService:
         logger.info("Added %d chunks to Chroma", len(chunks))
         return len(chunks)
 
-    def search(self, req: QueryRag) -> RagResponse:
+    def search(self, req: QueryRequest) -> QueryResponse:
         query_emb = self._embed(req.query, is_query=True)
         raw = self.repo.query(query_emb, n_results=req.top_k)
 
@@ -48,4 +48,4 @@ class RagService:
             )
 
         logger.info("RAG search completed", extra={"query": req.query, "hits": len(hits)})
-        return RagResponse(query=req.query, hits=hits)
+        return QueryResponse(query=req.query, hits=hits)
