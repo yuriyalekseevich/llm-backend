@@ -1,4 +1,4 @@
-from typing import Literal, Optional, List
+from typing import Literal, Optional, List, Dict, Any
 from pydantic import BaseModel, Field
 
 
@@ -30,3 +30,11 @@ class Query(BaseModel):
 class Response(BaseModel):
     output: str
     tokens_used: Optional[int] = None
+
+class Document(BaseModel):
+    text: str
+    metadata: Optional[Dict[str, Any]] = None
+
+class SearchRequest(BaseModel):
+    query: str
+    top_k: int = 3

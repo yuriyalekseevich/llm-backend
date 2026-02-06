@@ -14,32 +14,36 @@ _chroma_repo: ChromaRepository | None = None
 _rag_service: RagService | None = None
 
 
-# --- Embedder ---
+# Dependency for embedder
 def get_embedder() -> SentenceTransformer:
     global _embedder
     if _embedder is None:
-        logger.info("Loading google/embeddinggemma-300m ...")
-        _embedder = SentenceTransformer("google/embeddinggemma-300m", device="mps")  # Mac M1/M2/M3
-        logger.info("EmbeddingGemma loaded")
+        logger.info("Loading SentenceTransformer model: all-MiniLM-L6-v2")
+        try:
+            _embedder = SentenceTransformer('all-MiniLM-L6-v2', device="cpu")  # Adjust device: 'mps' for Mac, 'cuda' for GPU
+            logger.info(f"✅ Embedding model loaded (dimension: {_embedder.get_sentence_embedding_dimension()})")
+        except Exception as e:
+            logger.error(f"❌ Embedding model failed: {e}")
+            raise
+        logger.info("Embedder loaded successfully")
     return _embedder
 
-
-# --- Chroma Repository ---
+# Dependency for Chroma repo
 def get_chroma_repo() -> ChromaRepository:
     global _chroma_repo
     if _chroma_repo is None:
-        _chroma_repo = ChromaRepository()
-        logger.info("ChromaRepository initialized")
+        logger.info("Initializing ChromaRepository")
+        _chroma_repo = ChromaRepository()  # This triggers chroma_repo.py init
     return _chroma_repo
 
-
-# --- RAG Service ---
+# Dependency for RAG service (injects embedder and repo)
 def get_rag_service(
     embedder: SentenceTransformer = Depends(get_embedder),
     repo: ChromaRepository = Depends(get_chroma_repo)
 ) -> RagService:
     global _rag_service
     if _rag_service is None:
+        logger.info("Initializing RagService")
         _rag_service = RagService(embedder, repo)
     return _rag_service
 
@@ -62,3 +66,4 @@ def get_groq_client() -> Groq:
         raise ValueError("GROQ_API_KEY not set in environment")
     logger.info("Groq client created", extra={"api_key_len": len(api_key)})
     return Groq(api_key=api_key)
+
