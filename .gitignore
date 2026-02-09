@@ -12,3 +12,12 @@ env/
 
 # macOS junk
 .DS_Store
+
+# Database files
+*.sqlite3
+*.db
+chroma_db/
+
+# Sample/test data
+sample_doc.txt
+*.bin
