@@ -54,3 +54,20 @@ class QueryResponse(BaseModel):
     # Optional fields for future expansion (e.g., performance metrics)
     # total_hits: Optional[int] = None
     # took_ms: Optional[float] = None
+
+
+class IngestionResponse(BaseModel):
+    """Response for PDF ingestion (async processing)."""
+
+    status: str = Field(..., description="e.g. 'processing' or 'completed'")
+    chunks_added: int = Field(0, description="Number of chunks added (0 when queued)")
+    message: str = Field(..., description="Human-readable status message")
+
+
+class StatsResponse(BaseModel):
+    """Response for RAG / vector store statistics."""
+
+    repository: Dict[str, Any] = Field(default_factory=dict, description="Chroma collection stats")
+    embedding_model: Dict[str, Any] = Field(default_factory=dict, description="Embedding model name and dimension")
+    llm: Dict[str, Any] = Field(default_factory=dict, description="LLM model and parameters")
+    chunking: Dict[str, Any] = Field(default_factory=dict, description="Chunk size and overlap")
